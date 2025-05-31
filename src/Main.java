@@ -7,28 +7,23 @@ import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
-        BlockingQueue blockingQueue = new BlockingQueue(3);
+        BlockingQueue blockingQueue = new BlockingQueue(5);
 
-        Thread t1 = new Thread(() -> blockingQueue.enqueue(1));
-        Thread t2 = new Thread(() -> blockingQueue.enqueue(1));
-        Thread t3 = new Thread(() -> blockingQueue.enqueue(1));
-        Thread t4 = new Thread(() -> blockingQueue.enqueue(1));
-        Thread t5 = new Thread(() -> blockingQueue.enqueue(1));
+        try (ExecutorService executors = Executors.newVirtualThreadPerTaskExecutor()) {
 
-        t1.start();
-        t2.start();
-        t3.start();
-        t4.start();
-        t5.start();
+            List<Runnable> addRunnable = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                int finalI = i;
+                addRunnable.add(() -> blockingQueue.enqueue(finalI));
+            }
 
-        Thread t6 = new Thread(blockingQueue::dequeue);
-        Thread t7 = new Thread(blockingQueue::dequeue);
-        Thread t8 = new Thread(blockingQueue::dequeue);
-        Thread t9 = new Thread(blockingQueue::dequeue);
+            List<Runnable> removeRunnable = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+                removeRunnable.add(blockingQueue::dequeue);
+            }
 
-        t6.start();
-        t7.start();
-        t8.start();
-        t9.start();
+            addRunnable.forEach(executors::execute);
+            removeRunnable.forEach(executors::execute);
+        }
     }
 }

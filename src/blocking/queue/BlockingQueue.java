@@ -24,9 +24,9 @@ public class BlockingQueue {
             }
         }
 
-        System.out.printf("Adding element: %d when size is: %d%n", element, size);
-        list.addLast(element);
         size++;
+        list.addFirst(element);
+        System.out.printf("Adding element: %d when size is: %d%n", element, size);
         notify();
     }
 
@@ -42,7 +42,7 @@ public class BlockingQueue {
         size--;
         Integer lastElement = list.getLast();
         list.removeLast();
-        System.out.println("Dequeued " + lastElement + " element and size is " + size);
+        System.out.println("Dequeued element " + lastElement + " and size is " + size);
 
         notify();
 
