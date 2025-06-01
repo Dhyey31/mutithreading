@@ -24,10 +24,12 @@ public class BlockingQueue {
             }
         }
 
+        if (size == 0) {
+            notifyAll();
+        }
         size++;
         list.addFirst(element);
         System.out.printf("Adding element: %d when size is: %d%n", element, size);
-        notify();
     }
 
     public synchronized int dequeue() {
@@ -39,12 +41,15 @@ public class BlockingQueue {
             }
         }
 
+        if (size == n) {
+            notifyAll();
+        }
+
         size--;
         Integer lastElement = list.getLast();
         list.removeLast();
         System.out.println("Dequeued element " + lastElement + " and size is " + size);
 
-        notify();
 
         return lastElement;
     }
