@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class UnisexBathroom {
     enum Gender {NONE, MALE, FEMALE}
 
-    private final ReentrantLock lock = new ReentrantLock(true); // fair lock
+    private final ReentrantLock lock = new ReentrantLock(true);
     private final Condition menQueue = lock.newCondition();
     private final Condition womenQueue = lock.newCondition();
 
@@ -22,11 +22,9 @@ public class UnisexBathroom {
         lock.lock();
         try {
             waitingMen++;
-            while (
-                    currentGender == Gender.FEMALE ||
-                            peopleInside == MAX_CAPACITY ||
-                            (currentGender == Gender.NONE && nextTurn == Gender.FEMALE && waitingWomen > 0)
-            ) {
+            while (currentGender == Gender.FEMALE ||
+                    peopleInside == MAX_CAPACITY ||
+                    (currentGender == Gender.NONE && nextTurn == Gender.FEMALE && waitingWomen > 0)) {
                 menQueue.await();
             }
             waitingMen--;
@@ -65,11 +63,9 @@ public class UnisexBathroom {
         lock.lock();
         try {
             waitingWomen++;
-            while (
-                    currentGender == Gender.MALE ||
-                            peopleInside == MAX_CAPACITY ||
-                            (currentGender == Gender.NONE && nextTurn == Gender.MALE && waitingMen > 0)
-            ) {
+            while (currentGender == Gender.MALE ||
+                    peopleInside == MAX_CAPACITY ||
+                    (currentGender == Gender.NONE && nextTurn == Gender.MALE && waitingMen > 0)) {
                 womenQueue.await();
             }
             waitingWomen--;
